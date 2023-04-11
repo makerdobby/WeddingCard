@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- 방명록 AJAX 페이지 -->
+
+<!-- 방명록 block -->
+<div id="guestbook-outline">
+	<h1 class="mb-3 title">방명록</h1>
+
+	<div class="d-flex justify-content-center mb-3">
+		<button type="button" class="write-guestbook" onclick="openModal()">축하글
+			작성하기</button>
+	</div>
+	<th:block  th:each="vl : ${voList}">
+		<ul class="guest-list list-group mb-2">
+			<li class="list-group-item">
+				<div class="row">
+					<div class="line-18 col">
+						<span class="float-start comment-name text-left"
+							th:text="${vl.gName}">이름</span> <span
+							class="float-end comment-date text-right" th:text="${vl.gDt}">날짜</span>
+					</div>
+				</div>
+
+				<div id="comnt-title" th:text="${vl.gMsg}"></div>
+			</li>
+			<li class="list-group-item">
+				<div class="pointer line-18 text-center fs-12 "
+					th:if="${#strings.equals(session.sessionName, vl.gName)} and ${#strings.equals(session.sessionPw, vl.gPw)}"
+					th:text="수정"
+					th:onClick="|location.href='@{/guest/edit(gId=${vl.gId})}'|">수정</div>
+				<div class="pointer line-18 text-center fs-12 "
+					th:unless="${#strings.equals(session.sessionName, vl.gName)} and ${#strings.equals(session.sessionPw, vl.gPw)}"
+					th:text="댓글" th:onclick="|openModalReply(${vl.gId})|">댓글</div>
+			</li>
+		</ul>
+
+		<!--  댓글 block -->
+		<th:block th:each="rvl : ${rVoList}">
+			<th:block th:if="${rvl.gId} == ${vl.gId}">
+				<ul class="guest-list list-group mb-2  background-blue w-75 mr-0">
+					<li class="list-group-item">
+						<div class="row">
+							<div class="line-18 col">
+								<span class="float-start comment-name text-left"
+									th:text="${rvl.rName}">이름</span> <span
+									class="float-end comment-date text-right" th:text="${rvl.rDt}">날짜</span>
+							</div>
+						</div>
+
+						<div id="comnt-title" th:text="${rvl.rMsg}"></div>
+					</li>
+					<li class="list-group-item">
+						<div class="pointer line-18 text-center fs-12 "
+							th:if="${#strings.equals(session.sessionName, rvl.rName)} and ${#strings.equals(session.sessionPw, rvl.rPw)}"
+							th:text="수정"
+							th:onClick="|location.href='@{/reply/edit(rId=${rvl.rId})}'|">수정</div>
+					</li>
+				</ul>
+			</th:block>
+		</th:block>
+
+	</th:block>
+
+	<div class="d-flex justify-content-center">
+		<ul class="pagination">
+			<th:block th:each="i: ${#numbers.sequence(1, lastPage, 1)}">
+				<li class="page-item"><a class="page-link text-secondary"
+					th:onclick="|ajaxGuestBook(${i})|" th:text="${i}">페이지번호</a></li>
+			</th:block>
+		</ul>
+	</div>
+
+	<div class="modal-background" id="modal-background"></div>
+
+
+	<!-- 모달 - 축하글 작성 -->
+	<div class="modal-box" id="modal-box">
+
+		<div class="position-relative">
+			<button onclick="closeModal()"
+				class="btn position-absolute top-0 end-0">✕</button>
+		</div>
+
+		<div class="title">방명록 축하글 작성</div>
+		<form name="wFrm01">
+			<table class="table">
+				<colgroup>
+					<col width="30%" />
+					<col width="70%" />
+				</colgroup>
+				<tr>
+					<th class="comment-title">이름</th>
+					<td><input type="text" name="gName" class="comment-input"
+						maxlength="30" autocomplete="off" placeholder="이름을 입력해주세요"
+						th:value="${session.sessionName != null} ? ${session.sessionName} : ''" /></td>
+				</tr>
+				<tr>
+					<th class="comment-title">비밀번호</th>
+					<td><input type="password" name="gPw" class="comment-input"
+						maxlength="30" autocomplete="off" placeholder="비밀번호를 입력해주세요"
+						th:value="${session.sessionPw != null} ? ${session.sessionPw} : ''" /></td>
+				</tr>
+				<tr>
+					<th class="comment-title">내용</th>
+					<td><textarea name="gMsg" class="comment-input"
+							maxlength="100" autocomplete="off"
+							placeholder="내용을 입력해주세요(최대 100자)"></textarea></td>
+				</tr>
+			</table>
+		</form>
+
+		<button class="write-guestbook" onclick="doGuestInsert()">축하글 전달하기</button>
+	</div>
+
+	<!-- 모달 - 댓글 작성 -->
+	<div class="modal-box" id="modal-box-reply">
+
+		<div class="position-relative">
+			<button onclick="closeModalReply()"
+				class="btn position-absolute top-0 end-0">✕</button>
+		</div>
+
+		<div class="title">댓글작성</div>
+		<form name="wFrm02">
+			<input type="hidden" id="inputGId" name="gId"/>
+			<table class="table">
+				<colgroup>
+					<col width="30%" />
+					<col width="70%" />
+				</colgroup>
+				<tr>
+					<th class="comment-title">이름</th>
+					<td><input type="text" name="rName" class="comment-input"
+						maxlength="30" autocomplete="off" placeholder="이름을 입력해주세요"
+						th:value="${session.sessionName != null}? ${session.sessionName} : ''" /></td>
+				</tr>
+				<tr>
+					<th class="comment-title">비밀번호</th>
+					<td><input type="password" name="rPw" class="comment-input"
+						maxlength="30" autocomplete="off" placeholder="비밀번호를 입력해주세요"
+						th:value="${session.sessionPw != null}? ${session.sessionPw} : ''" /></td>
+				</tr>
+				<tr>
+					<th class="comment-title">내용</th>
+					<td><textarea name="rMsg" class="comment-input"
+							maxlength="100" autocomplete="off"
+							placeholder="내용을 입력해주세요(최대 100자)"></textarea></td>
+				</tr>
+			</table>
+		</form>
+
+		<button class="write-guestbook" onclick="doGuestReplyInsert()">댓글작성</button>
+	</div>
+
+
+</div>
+
+</html>

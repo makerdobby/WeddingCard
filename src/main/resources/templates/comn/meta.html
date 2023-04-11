@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="meta(title)">
+	<meta charset="utf-8">
+
+	<!-- thumbnail -->
+	<link rel="icon" href="/images/wedding_icon.ico" />
+  	<meta property="og:image" content="/images/wedding/1.jpg">
+  	<meta property="og:title" content="손호성♡윤송이의 모바일청첩장입니다">
+  	<meta property="og:description" content="🧑🏻‍❤️‍💋‍👩🏻감사합니다">
+
+	<!-- jquery -->
+	<script src="https://code.jquery.com/jquery-3.6.3.min.js" ></script>
+
+	<!-- BootStrap -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+	<!-- css -->
+	<link href="/css/Home.css" th:href="@{/css/Home.css}" rel="stylesheet" type="text/css" />
+
+	<!-- js -->
+	<script src="/js/main.js" th:src="@{/js/Home.js}"></script>
+
+	<!-- clipboard JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.0/clipboard.min.js"></script>
+
+	<title th:text="${title}">Hello, Spring Boot!</title>
+</head>
+</html>

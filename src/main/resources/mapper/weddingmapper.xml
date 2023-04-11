@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.thymeleaf.test.mapper.WeddingMapper">
+
+
+	<select id="select01" resultType="com.thymeleaf.test.vo.GuestVo" parameterType="java.util.Map">
+		/** select01 voList 조회 */
+		SELECT
+			 G_ID AS gId
+			,G_NAME AS gName
+			,G_PW AS gPw
+			,G_MSG AS gMsg
+			,G_DT AS gDt
+			,NUM
+		FROM (
+		 	SELECT
+		 		ROW_NUMBER() OVER(ORDER BY G_ID DESC) NUM ,
+		 		A.*
+		 	FROM
+		 		WEDDING_GUEST A
+		 	ORDER BY
+		 		A.G_ID DESC
+		)
+		WHERE
+			NUM BETWEEN #{startRow} AND #{endRow}
+	</select>
+
+	<select id="select02" resultType="Integer">
+		/** select02 전체 데이터 갯수 조회 */
+		SELECT
+			count(G_ID)
+		 FROM
+		 	WEDDING_GUEST
+	</select>
+
+	<select id="select03" resultType="com.thymeleaf.test.vo.GuestVo"  parameterType="Integer">
+		/** select03 vo 단건 조회 */
+		SELECT
+			 G_ID AS gId
+			,G_NAME AS gName
+			,G_PW AS gPw
+			,G_MSG AS gMsg
+			,G_DT AS gDt
+		FROM
+			WEDDING_GUEST
+		WHERE
+			G_ID=#{gId}
+	</select>
+
+	<select id="select04" resultType="com.thymeleaf.test.vo.ReplyVo">
+		/** select04 reply 전체 목록 조회 */
+		SELECT
+			 R_ID AS rId
+			,R_NAME AS rName
+			,R_PW AS rPw
+			,R_MSg AS rMsg
+			,R_DT AS rDt
+			,G_ID AS gId
+		FROM
+			REPLY
+		ORDER BY
+			R_ID ASC
+	</select>
+
+	<select id="select05" resultType="com.thymeleaf.test.vo.ReplyVo" parameterType="Integer">
+		/** select05 reply 단건 조회 */
+		SELECT
+			 R_ID AS rId
+			,R_NAME AS rName
+			,R_PW AS rPw
+			,R_MSg AS rMsg
+			,R_DT AS rDt
+			,G_ID AS gId
+		FROM
+			REPLY
+		WHERE
+			R_ID=#{rId}
+	</select>
+
+	<insert id="insert01" parameterType="com.thymeleaf.test.vo.GuestVo">
+		INSERT INTO
+			WEDDING_GUEST(
+				  G_NAME
+				, G_PW
+				, G_MSG
+			)VALUES(
+				  #{gName}
+				, #{gPw}
+				, #{gMsg}
+			)
+	</insert>
+
+	<insert id="insert02" parameterType="com.thymeleaf.test.vo.ReplyVo">
+		INSERT INTO
+			REPLY(
+				  R_NAME
+				, R_PW
+				, R_MSG
+				, G_ID
+			)VALUES(
+				  #{rName}
+				, #{rPw}
+				, #{rMsg}
+				, #{gId}
+			)
+	</insert>
+
+	<update id="update01" parameterType="com.thymeleaf.test.vo.GuestVo">
+		UPDATE
+			WEDDING_GUEST
+		SET
+			  G_NAME=#{gName}
+			, G_PW=#{gPw}
+			, G_MSG=#{gMsg}
+		WHERE
+			G_ID=#{gId}
+
+	</update>
+
+	<update id="update02" parameterType="com.thymeleaf.test.vo.ReplyVo">
+		UPDATE
+			REPLY
+		SET
+			  R_NAME=#{rName}
+			, R_PW=#{rPw}
+			, R_MSG=#{rMsg}
+		WHERE
+			R_ID=#{rId}
+
+	</update>
+
+	<delete id="delete01" parameterType="Integer">
+		DELETE FROM
+			WEDDING_GUEST
+		WHERE
+			G_ID=#{gId}
+	</delete>
+
+	<delete id="delete02" parameterType="Integer">
+		/** 축하글에 딸린 댓글도 함께 삭제 */
+		DELETE FROM
+			REPLY
+		WHERE
+			G_ID=#{gId}
+	</delete>
+
+	<delete id="delete03" parameterType="Integer">
+		DELETE FROM
+			REPLY
+		WHERE
+			R_ID=#{rId}
+	</delete>
+
+	<update id="query">
+		ALTER TABLE ADMIN.WEDDING_GUEST MODIFY G_MSG NVARCHAR2(300)
+	</update>
+
+</mapper>

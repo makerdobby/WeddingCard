@@ -1,0 +1,69 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.10'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'com.thymeleaf'
+version = '6.9.4'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+
+}
+
+
+
+dependencies {
+	// Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	// 시큐리티 태그 라이브러리
+	implementation 'org.springframework.security:spring-security-taglibs'
+
+	// junit 같은걸 가져옴 (이거 지우면 Demo에서 import 했던 것들이 안먹힘)
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// TOMCAT과 연결
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// 편리한 ANNOTATION LOMBOK
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// DB
+	// Oracle DB
+	// https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc10
+	implementation 'com.oracle.database.jdbc:ojdbc10:19.18.0.0'
+    implementation 'com.oracle.database.security:oraclepki'
+    implementation 'com.oracle.database.security:osdt_core'
+    implementation 'com.oracle.database.security:osdt_cert'
+
+
+	// MyBatis
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.0'
+
+	// devtools (자동 리로드를 하기 위함 properties에서 설정함)
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// ThymeLeaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

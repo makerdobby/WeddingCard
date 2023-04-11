@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- META 변수는 title명 -->
+<head th:replace="comn/meta :: meta('Wedding')">
+</head>
+<body class="d-flex flex-column">
+
+	<div class="btm-text h-100 text-center">
+	<div>&nbsp;</div>
+
+		<!-- 축하글 수정 -->
+		<div class="title">내가 쓴 글 수정</div>
+		<form name="wFrm03" th:object="${vo}">
+			<input type="hidden" th:field="*{gId}" />
+			<table class="table">
+				<colgroup>
+					<col width="30%" />
+					<col width="70%" />
+				</colgroup>
+				<tr>
+					<th class="comment-title">이름</th>
+					<td><input type="text" class="comment-input" maxlength="30"
+						autocomplete="off" th:field="*{gName}" /></td>
+				</tr>
+				<tr>
+					<th class="comment-title">비밀번호</th>
+					<td><input type="text" id="halo" class="comment-input"
+						maxlength="30" autocomplete="off" placeholder="비밀번호를 입력해주세요." th:field="*{gPw}" required/></td>
+				</tr>
+				<tr>
+					<th class="comment-title">내용</th>
+					<td><textarea class="comment-input" maxlength="100"
+							autocomplete="off" th:field="*{gMsg}"></textarea></td>
+				</tr>
+			</table>
+		</form>
+
+		<button class="write-guestbook" onclick="doGuestUpdate()">축하글 수정하기</button>
+		<button class="write-guestbook2" onclick="doGuestDelete()">삭 제</button>
+	</div>
+
+</body>
+</html>
